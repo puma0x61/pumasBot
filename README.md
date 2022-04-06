@@ -1,6 +1,11 @@
 # pumasBot
 My personal telegram bot.
-His usefulness is very (at least for now).
+It can show the weather, italian train status (not implemented yet), 
+and my lesson schedule (not implemented yet) 
 
 ## Weather (WIP)
-uses the [MET Weather API](https://developer.yr.no/doc/GettingStarted/)
+Uses the OpenWeather API
+
+### Commands
+· `/weather [location] [current|hourly|daily|alerts]` shows the weather for the specified location, 
+can be current weather, hourly, daily, or show an eventual weather alert
