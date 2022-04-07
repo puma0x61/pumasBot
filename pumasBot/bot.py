@@ -1,9 +1,8 @@
 #! /usr/bin/python3
-
+import os.path
 import sys
 import json
 
-import requests
 import telebot
 
 from core import *
@@ -15,16 +14,22 @@ from core import *
 # timetable: add feature
 
 
-with open('../config.json') as config:
-    config = json.load(config)
-    if config['pumasBot']:
-        bot = telebot.TeleBot(token=config['pumasBot'])
-        weather_key = config['weather_key']
-    else:
-        print("###################################################")
-        print("# Please setup the needed keys in the config file #")
-        print("###################################################")
-        sys.exit()
+try:
+    with open(os.path.join(os.path.dirname(__file__), '..', 'config.json')) as config:
+        try:
+            config = json.load(config)
+            bot = telebot.TeleBot(config[sys.argv[1]])
+            weather_key = config['weather_key']
+        except (IndexError, KeyError):
+            print('###################################################')
+            print('# Please setup the needed keys in the config file #')
+            print('###################################################')
+            sys.exit()
+except FileNotFoundError:
+    print('######################################')
+    print('# Please provide a valid config file #')
+    print('######################################')
+    sys.exit()
 
 
 @bot.message_handler(commands=['start', 'help'])
@@ -40,12 +45,10 @@ def handle_weather(message):
         location_name = message_text[0].strip()
     except IndexError:
         location_name = 'Novara'
-        pass
     try:
         time = message_text[1].strip()
     except IndexError:
         time = 'current'
-        pass
     bot.reply_to(message, weather(weather_key, location_name, time))
     pass
 
