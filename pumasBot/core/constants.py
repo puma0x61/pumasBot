@@ -4,8 +4,8 @@ HELP_MESSAGE = 'No help for you'
 
 WEATHER_MESSAGE = 'Look for yourself.\nyr.no\nmeteoblue.com'
 
-LIMIT = 1
-
 EXCLUDE = 'minutely,hourly,alerts'
 
-WEATHER_ERROR = 'Couldn\'t get weather data, try again in a minute'
+WEATHER_KEYERROR = 'Sorry, I can\'t find any data on your search, try something different'
+
+WEATHER_ERROR = 'Couldn\'t get weather data, please try again in a minute'

@@ -8,6 +8,13 @@ import telebot
 
 from core import *
 
+
+# TODO:
+# weather: choose different location if more with the same name
+# trains: add feature
+# timetable: add feature
+
+
 with open('../config.json') as config:
     config = json.load(config)
     if config['pumasBot']:

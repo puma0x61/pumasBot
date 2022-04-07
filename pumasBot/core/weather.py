@@ -2,11 +2,16 @@ import requests
 
 from .constants import *
 
+# TODO:
+# refactor
+# move geolocation to new file
 
-def get_weather(weather_key, location_name, exclude='minutely'):
+
+def get_weather(weather_key, location_name, exclude='minutely', limit=1):
     location = requests.get(
-        f'https://api.openweathermap.org/geo/1.0/direct?q={location_name}&limit={LIMIT}&appid={weather_key}'
+        f'https://api.openweathermap.org/geo/1.0/direct?q={location_name}&limit={limit}&appid={weather_key}'
     ).json()
+    # print(location)
     lat = location[0]['lat']
     lon = location[0]['lon']
     if exclude == '':
@@ -17,31 +22,37 @@ def get_weather(weather_key, location_name, exclude='minutely'):
         weather_obj = requests.get(
             f'https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={exclude}&appid={weather_key}'
         ).json()
+    # print(weather_obj)
     return weather_obj, location_name
 
 
 def weather_message_creator(weather_list, time):
     weather_obj, location_name = weather_list[0], weather_list[1]
     alert = ''
-    if time == 'current':
-        weather_description = weather_obj['current']['weather'][0]['description']
-        time_description = f'The current weather for {location_name} is: '
-    # elif time == 'minutely':
-    #     weather_description = weather['minutely'][0]['weather'][0]['description']
-    #     time_description = 'The current weather is '
-    elif time == 'hourly':
-        weather_description = weather_obj['hourly'][0]['weather'][0]['description']
-        time_description = f'The weather in {location_name} the next hour is: '
-    elif time == 'daily':
-        weather_description = weather_obj['daily'][0]['weather'][0]['description']
-        time_description = f'This day\'s weather in {location_name} is: '
-    elif time == 'alerts':
-        weather_description = weather_obj['alerts'][0]['description']
-        alert = weather_obj['alerts'][0]['event']
-        time_description = f'⚠ALERT FOR {location_name.upper()}⚠\n\n' + alert + '\n\n'
-    else:
+    try:
+        if time == 'current':
+            weather_description = weather_obj['current']['weather'][0]['description']
+            time_description = f'The current weather for {location_name} is: '
+        # minutely precipitation forecast: will probably never be implemented
+        # elif time == 'minutely':
+        #     weather_description = weather['minutely'][0]['weather'][0]['description']
+        #     time_description = 'The current weather is '
+        elif time == 'hourly':
+            weather_description = weather_obj['hourly'][0]['weather'][0]['description']
+            time_description = f'The weather in {location_name} the next hour is: '
+        elif time == 'daily':
+            weather_description = weather_obj['daily'][0]['weather'][0]['description']
+            time_description = f'This day\'s weather in {location_name} is: '
+        elif time == 'alerts':
+            weather_description = weather_obj['alerts'][0]['description']
+            alert = weather_obj['alerts'][0]['event']
+            time_description = f'⚠ALERT FOR {location_name.upper()}⚠\n\n' + alert + '\n\n'
+        else:
+            time_description = ''
+            weather_description = WEATHER_ERROR
+    except KeyError:
         time_description = ''
-        weather_description = WEATHER_ERROR
+        weather_description = WEATHER_KEYERROR
     weather_message = time_description + weather_description
     return weather_message
 

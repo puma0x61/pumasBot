@@ -8,4 +8,4 @@ Uses the OpenWeather API
 
 ### Commands
 · `/weather [location] [current|hourly|daily|alerts]` shows the weather for the specified location, 
-can be current weather, hourly, daily, or show an eventual weather alert
+can be current weather, hourly, daily, or show an eventual weather alert. Default values are "Novara", "current".
