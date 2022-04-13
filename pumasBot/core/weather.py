@@ -1,5 +1,7 @@
 import requests
 
+from math import trunc
+
 from .constants import *
 
 # TODO:
@@ -7,7 +9,7 @@ from .constants import *
 # move geolocation to new file
 
 
-def get_weather(weather_key, location_name, exclude='minutely', limit=1):
+def get_weather(weather_key, location_name, exclude='minutely', limit=1, units='metric'):
     location = requests.get(
         f'https://api.openweathermap.org/geo/1.0/direct?q={location_name}&limit={limit}&appid={weather_key}'
     ).json()
@@ -16,11 +18,13 @@ def get_weather(weather_key, location_name, exclude='minutely', limit=1):
     lon = location[0]['lon']
     if exclude == '':
         weather_obj = requests.get(
-            f'https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&appid={weather_key}'
+            f'https://api.openweathermap.org/data/2.5/onecall?'
+            f'lat={lat}&lon={lon}&units={units}&appid={weather_key}'
         ).json()
     else:
         weather_obj = requests.get(
-            f'https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={exclude}&appid={weather_key}'
+            f'https://api.openweathermap.org/data/2.5/onecall?'
+            f'lat={lat}&lon={lon}&exclude={exclude}&units={units}&appid={weather_key}'
         ).json()
     # print(weather_obj)
     return weather_obj, location_name
@@ -28,32 +32,38 @@ def get_weather(weather_key, location_name, exclude='minutely', limit=1):
 
 def weather_message_creator(weather_list, time):
     weather_obj, location_name = weather_list[0], weather_list[1]
-    alert = ''
+    temperature_units = ' degrees celsius'
     try:
         if time == 'current':
-            weather_description = weather_obj['current']['weather'][0]['description']
-            time_description = f'The current weather for {location_name} is: '
+            weather_description = weather_obj[time]['weather'][0]['description']
+            temperature = weather_obj[time]['temp']
+            weather_message = f'In {location_name}, we currently have {weather_description}, ' \
+                              f'with a temperature of {str(trunc(temperature)) + temperature_units}'
         # minutely precipitation forecast: will probably never be implemented
         # elif time == 'minutely':
         #     weather_description = weather['minutely'][0]['weather'][0]['description']
         #     time_description = 'The current weather is '
         elif time == 'hourly':
-            weather_description = weather_obj['hourly'][0]['weather'][0]['description']
-            time_description = f'The weather in {location_name} the next hour is: '
+            weather_description = weather_obj[time][0]['weather'][0]['description']
+            temperature = weather_obj[time][0]['temp']
+            weather_message = f'The weather in {location_name} in the next hour will be {weather_description}, ' \
+                              f'with a temperature of {str(trunc(temperature)) + temperature_units}'
         elif time == 'daily':
             weather_description = weather_obj['daily'][0]['weather'][0]['description']
-            time_description = f'This day\'s weather in {location_name} is: '
+            temperature_avg = weather_obj[time][0]['temp']['day']
+            temperature_min = weather_obj[time][0]['temp']['min']
+            temperature_max = weather_obj[time][0]['temp']['max']
+            weather_message = f'This day\'s weather in {location_name} will be {weather_description}, ' \
+                              f'with an average temperature of {str(trunc(temperature_avg)) + temperature_units} ' \
+                              f'(min {trunc(temperature_min)}, max {trunc(temperature_max)})'
         elif time == 'alerts':
             weather_description = weather_obj['alerts'][0]['description']
             alert = weather_obj['alerts'][0]['event']
-            time_description = f'⚠ALERT FOR {location_name.upper()}⚠\n\n' + alert + '\n\n'
+            weather_message = f'⚠ALERT FOR {location_name.upper()}⚠\n\n' + alert + '\n\n' + weather_description
         else:
-            time_description = ''
-            weather_description = WEATHER_ERROR
+            weather_message = WEATHER_ERROR
     except KeyError:
-        time_description = ''
-        weather_description = WEATHER_KEYERROR
-    weather_message = time_description + weather_description
+        weather_message = WEATHER_KEYERROR
     return weather_message
 
 
