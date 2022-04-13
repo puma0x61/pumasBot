@@ -53,4 +53,10 @@ def handle_weather(message):
     pass
 
 
+@bot.message_handler(commands=['trains'])
+def handle_trains(message):
+    bot.reply_to(message, trains())
+    pass
+
+
 bot.polling()
