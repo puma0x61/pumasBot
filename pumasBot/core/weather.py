@@ -37,8 +37,8 @@ def weather_message_creator(weather_list, time):
         if time == 'current':
             weather_description = weather_obj[time]['weather'][0]['description']
             temperature = weather_obj[time]['temp']
-            weather_message = f'In {location_name}, we currently have {weather_description}, ' \
-                              f'with a temperature of {str(trunc(temperature)) + temperature_units}'
+            weather_message = f'In {location_name}, we currently have <b>{weather_description}</b>, ' \
+                              f'with a temperature of <b>{str(trunc(temperature)) + temperature_units}</b>'
         # minutely precipitation forecast: will probably never be implemented
         # elif time == 'minutely':
         #     weather_description = weather['minutely'][0]['weather'][0]['description']
@@ -46,15 +46,18 @@ def weather_message_creator(weather_list, time):
         elif time == 'hourly':
             weather_description = weather_obj[time][0]['weather'][0]['description']
             temperature = weather_obj[time][0]['temp']
-            weather_message = f'The weather in {location_name} in the next hour will be {weather_description}, ' \
-                              f'with a temperature of {str(trunc(temperature)) + temperature_units}'
+            weather_message = f'The weather in {location_name} ' \
+                              f'in the next hour will be <b>{weather_description}</b>, ' \
+                              f'with a temperature of <b>{str(trunc(temperature)) + temperature_units}</b>'
         elif time == 'daily':
             weather_description = weather_obj['daily'][0]['weather'][0]['description']
             temperature_avg = weather_obj[time][0]['temp']['day']
             temperature_min = weather_obj[time][0]['temp']['min']
             temperature_max = weather_obj[time][0]['temp']['max']
-            weather_message = f'This day\'s weather in {location_name} will be {weather_description}, ' \
-                              f'with an average temperature of {str(trunc(temperature_avg)) + temperature_units} ' \
+            weather_message = f'This day\'s weather in {location_name} will be <b>{weather_description}</b>, ' \
+                              f'with an average temperature of ' \
+                              f'' \
+                              f'<b>{str(trunc(temperature_avg)) + temperature_units}</b> ' \
                               f'(min {trunc(temperature_min)}, max {trunc(temperature_max)})'
         elif time == 'alerts':
             weather_description = weather_obj['alerts'][0]['description']
