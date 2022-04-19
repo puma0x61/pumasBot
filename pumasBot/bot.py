@@ -45,7 +45,7 @@ except FileNotFoundError:
 
 @bot.message_handler(commands=['start', 'help'])
 def welcome(message):
-    bot.reply_to(message, WELCOME_MESSAGE)
+    bot.reply_to(message, WELCOME_MESSAGE, parse_mode='html')
     pass
 
 
@@ -60,7 +60,7 @@ def handle_weather(message):
         time_ = message_text[1].strip()
     except IndexError:
         time_ = 'current'
-    bot.reply_to(message, weather(weather_key, location_name, time_))
+    bot.reply_to(message, weather(weather_key, location_name, time_), parse_mode='html')
     pass
 
 
@@ -71,7 +71,7 @@ def handle_trains(message):
         train_message = train_delay(train_id)
     except IndexError:
         train_message = 'Train not found. Check if you have the right train number!'
-    bot.reply_to(message, train_message)
+    bot.reply_to(message, train_message, parse_mode='html')
     pass
 
 
@@ -79,7 +79,7 @@ def morning_message_sender():
     try:
         for user in users_list:
             chat_id, location_name, train_id = user['chat_id'], user['location_name'], user['train_id']
-            bot.send_message(chat_id, morning_message_creator(weather_key, location_name, train_id))
+            bot.send_message(chat_id, morning_message_creator(weather_key, location_name, train_id), parse_mode='html')
     except Exception as e:
         print(e)
         pass
