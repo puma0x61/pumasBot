@@ -3,8 +3,6 @@ import csv
 import os.path
 import sys
 import json
-import datetime
-import time
 
 import telebot
 
@@ -79,7 +77,10 @@ def morning_message_sender():
     try:
         for user in users_list:
             chat_id, location_name, train_id = user['chat_id'], user['location_name'], user['train_id']
-            bot.send_message(chat_id, morning_message_creator(weather_key, location_name, train_id), parse_mode='html')
+            messages = morning_message_creator(weather_key, location_name, train_id)
+            for message in messages:
+                if message:
+                    bot.send_message(chat_id, message, parse_mode='html')
     except Exception as e:
         print(e)
         pass
