@@ -299,4 +299,4 @@ cython_debug/
 config.json
 users.csv
 .idea
-
+calendar.ics
