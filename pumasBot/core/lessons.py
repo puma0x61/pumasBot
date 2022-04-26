@@ -10,7 +10,7 @@ def schedule_message_creator():
     schedule_ = daily_schedule()
     schedule = [lesson for n, lesson in enumerate(schedule_) if lesson not in schedule_[:n]]
     schedule_message = False
-    if schedule:
+    if schedule:  # this can become an exception
         schedule_message = 'Today\'s lessons are:\n\n'
         for lesson in schedule:
             schedule_message = schedule_message + f'<b>{lesson[1]}:</b> {lesson[0]}\n\n'

@@ -45,6 +45,19 @@ def train_delay(train_id):
     return current_delay['ritardo']
 
 
+def delay_message(train_id):
+    train_delay_minutes = train_delay(train_id)
+    train_delay_message = 'Your train is '
+    if train_delay_minutes < 0:
+        train_delay_minutes = abs(train_delay_minutes)
+        train_delay_message = train_delay_message + f'<b>{train_delay_minutes} minutes</b> early!'
+    elif train_delay_minutes > 0:
+        train_delay_message = train_delay_message + f'delayed by <b>{train_delay_minutes} minutes</b> :(.'
+    else:
+        train_delay_message = train_delay_message + 'on time!'
+    return train_delay_message
+
+
 def parse_train(train):
     train_data = train.replace('\n', '').split('|', maxsplit=1)
     return train_data[1].split('-')

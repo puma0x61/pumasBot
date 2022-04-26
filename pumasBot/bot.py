@@ -6,6 +6,7 @@ import json
 
 import telebot
 
+from datetime import date
 from core import *
 
 
@@ -36,9 +37,9 @@ try:
     with open(os.path.join(os.path.dirname(__file__), '..', 'users.csv'), newline='') as users_csv:
         users_list = [row for row in csv.DictReader(users_csv)]
 except FileNotFoundError:
-    print('###########################################################')
+    print('##########################################################')
     print('# users.csv file not found || can\'t send morning updates #')
-    print('###########################################################')
+    print('##########################################################')
 
 
 @bot.message_handler(commands=['start', 'help'])
@@ -66,7 +67,7 @@ def handle_weather(message):
 def handle_trains(message):
     try:
         train_id = message.text.split(' ')[1]
-        train_message = train_delay(train_id)
+        train_message = delay_message(train_id)
     except IndexError:
         train_message = 'Train not found. Check if you have the right train number!'
     bot.reply_to(message, train_message, parse_mode='html')
@@ -74,16 +75,17 @@ def handle_trains(message):
 
 
 def morning_message_sender():
-    try:
-        for user in users_list:
-            chat_id, location_name, train_id = user['chat_id'], user['location_name'], user['train_id']
-            messages = morning_message_creator(weather_key, location_name, train_id)
-            for message in messages:
-                if message:
-                    bot.send_message(chat_id, message, parse_mode='html')
-    except Exception as e:
-        print(e)
-        pass
+    if date.today().weekday() < 5:
+        try:
+            for user in users_list:
+                chat_id, location_name, train_id = user['chat_id'], user['location_name'], user['train_id']
+                messages = morning_message_creator(weather_key, location_name, train_id)
+                for message in messages:
+                    if message:
+                        bot.send_message(chat_id, message, parse_mode='html')
+        except Exception as e:
+            print(e)
+            pass
     pass
 
 
